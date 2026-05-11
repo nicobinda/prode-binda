@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/getCurrentUser';
 import { LoginForm } from './LoginForm';
@@ -23,12 +24,14 @@ export default async function LoginPage() {
 
       <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col px-7 pb-8 pt-12">
         <div className="flex justify-center pt-8">
-          <div className="font-display text-4xl font-black tracking-tight text-white">
-            PRODE
-            <span className="ml-2 inline-block rounded-md bg-pb-ceruleo px-2 py-0.5 text-2xl">
-              BINDA
-            </span>
-          </div>
+          <Image
+            src="/logo-prode-binda.png"
+            alt="Prode Binda 2026"
+            width={200}
+            height={200}
+            priority
+            className="drop-shadow-[0_8px_24px_rgba(97,141,255,0.35)]"
+          />
         </div>
 
         <div className="mt-auto">
