@@ -120,22 +120,22 @@ function PointsTable() {
     },
     {
       stage: 'Etapa 2 — 16vos + 8vos',
+      multiplier: 'x2',
+      rows: [
+        ['Quién pasa', '+2'],
+        ['Goles exactos equipo A', '+2'],
+        ['Goles exactos equipo B', '+2'],
+        ['Acertar si fue a penales', '+1'],
+      ],
+    },
+    {
+      stage: 'Etapa 3 — Cuartos+',
       multiplier: 'x3',
       rows: [
         ['Quién pasa', '+3'],
         ['Goles exactos equipo A', '+3'],
         ['Goles exactos equipo B', '+3'],
         ['Acertar si fue a penales', '+1'],
-      ],
-    },
-    {
-      stage: 'Etapa 3 — Cuartos+',
-      multiplier: 'x9',
-      rows: [
-        ['Quién pasa', '+9'],
-        ['Goles exactos equipo A', '+9'],
-        ['Goles exactos equipo B', '+9'],
-        ['Acertar si fue a penales', '+3'],
       ],
     },
   ];

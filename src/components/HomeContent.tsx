@@ -275,6 +275,7 @@ export function HomeContent({
                   match={match}
                   prediction={myPreds.get(match.id) ?? null}
                   onSaved={handleSaved}
+                  showDay={groupBy === 'zone'}
                 />
               ) : (
                 <LockedMatchCard
@@ -282,6 +283,7 @@ export function HomeContent({
                   match={match}
                   myPrediction={myPreds.get(match.id) ?? null}
                   onOpen={() => setPopupMatchId(match.id)}
+                  showDay={groupBy === 'zone'}
                 />
               ),
             )}

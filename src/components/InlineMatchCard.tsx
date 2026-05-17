@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { FlagChip } from './FlagChip';
 import { ScoreBox } from './ScoreBox';
 import { StatusTag } from './StatusTag';
-import { timeLabel } from '@/lib/dates';
+import { dayLabel, timeLabel } from '@/lib/dates';
 import { isTbdCode } from '@/lib/flags';
 import { savePrediction } from '@/app/partido/[id]/actions';
 import type { Match, Prediction } from '@/types/db';
@@ -13,13 +13,14 @@ interface Props {
   match: Match;
   prediction: Prediction | null;
   onSaved?: (p: Prediction) => void;
+  showDay?: boolean;
 }
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 const DEBOUNCE_MS = 600;
 
-export function InlineMatchCard({ match, prediction, onSaved }: Props) {
+export function InlineMatchCard({ match, prediction, onSaved, showDay }: Props) {
   const [goalsA, setGoalsA] = useState<number | null>(prediction?.goals_a ?? null);
   const [goalsB, setGoalsB] = useState<number | null>(prediction?.goals_b ?? null);
   const [winnerTie, setWinnerTie] = useState<string | null>(
@@ -99,9 +100,10 @@ export function InlineMatchCard({ match, prediction, onSaved }: Props) {
 
   return (
     <article className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-[0_4px_12px_rgba(11,29,94,0.06)]">
-      <header className="flex items-center justify-between">
-        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-pb-muted">
-          {match.round} · {timeLabel(match.kickoff_at)}
+      <header className="flex items-center justify-between gap-2">
+        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-pb-muted truncate">
+          {match.round}
+          {showDay && ` · ${dayLabel(match.kickoff_at)}`} · {timeLabel(match.kickoff_at)}
         </span>
         <StatusTag status="scheduled" />
       </header>

@@ -2,7 +2,7 @@
 
 import { FlagChip } from './FlagChip';
 import { StatusTag } from './StatusTag';
-import { timeLabel } from '@/lib/dates';
+import { dayLabel, timeLabel } from '@/lib/dates';
 import { isTbdCode } from '@/lib/flags';
 import type { Match, Prediction } from '@/types/db';
 import { pointsForMatch } from '@/lib/scoring';
@@ -11,9 +11,10 @@ interface Props {
   match: Match;
   myPrediction: Prediction | null;
   onOpen: () => void;
+  showDay?: boolean;
 }
 
-export function LockedMatchCard({ match, myPrediction, onOpen }: Props) {
+export function LockedMatchCard({ match, myPrediction, onOpen, showDay }: Props) {
   const myPoints =
     match.status === 'finished' && myPrediction
       ? pointsForMatch(match, myPrediction)
@@ -25,9 +26,10 @@ export function LockedMatchCard({ match, myPrediction, onOpen }: Props) {
       onClick={onOpen}
       className="flex w-full flex-col gap-3 rounded-2xl bg-white p-4 text-left shadow-[0_4px_12px_rgba(11,29,94,0.06)] transition hover:shadow-[0_6px_16px_rgba(11,29,94,0.10)] active:translate-y-px"
     >
-      <header className="flex items-center justify-between">
-        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-pb-muted">
-          {match.round} · {timeLabel(match.kickoff_at)}
+      <header className="flex items-center justify-between gap-2">
+        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-pb-muted truncate">
+          {match.round}
+          {showDay && ` · ${dayLabel(match.kickoff_at)}`} · {timeLabel(match.kickoff_at)}
         </span>
         <StatusTag status={match.status} />
       </header>

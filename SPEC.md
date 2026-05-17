@@ -39,14 +39,14 @@ App web de pronósticos deportivos para la **FIFA World Cup 2026**, de uso famil
 | Etapa | Partidos | Multiplicador |
 |---|---|---|
 | 1 — Fase de grupos | 72 | x1 |
-| 2 — 16vos + 8vos | 24 | x3 |
-| 3 — 4tos + Semis + Final | 8 | x9 (penales x3) |
+| 2 — 16vos + 8vos | 24 | x2 |
+| 3 — 4tos + Semis + Final | 8 | x3 |
 
 ### Puntaje por partido
 
-- **Etapa 1**: +1 resultado (gana A / B / empate), +1 goles exactos A, +1 goles exactos B
-- **Etapa 2**: +3 quién pasa, +3 goles A, +3 goles B, +1 si fue a penales
-- **Etapa 3**: +9 quién pasa, +9 goles A, +9 goles B, +3 si fue a penales
+- **Etapa 1**: +1 resultado (gana A / B / empate), +1 goles exactos A, +1 goles exactos B (máx 3)
+- **Etapa 2**: +2 quién pasa, +2 goles A, +2 goles B, +1 si fue a penales (máx 7)
+- **Etapa 3**: +3 quién pasa, +3 goles A, +3 goles B, +1 si fue a penales (máx 10)
 
 ### Reglas operativas
 
