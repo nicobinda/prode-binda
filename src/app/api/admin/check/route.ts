@@ -31,7 +31,6 @@ export async function GET() {
     matchesError = e instanceof Error ? e.message : String(e);
   }
 
-  // Resumen por stage
   const byStage: Record<
     string,
     { total: number; withBothTla: number; sampleMissing: unknown }
@@ -55,12 +54,43 @@ export async function GET() {
     }
   }
 
+  const interesting = matches
+    .filter(
+      (m) =>
+        m.status !== 'TIMED' &&
+        m.status !== 'SCHEDULED' &&
+        m.status !== 'POSTPONED' &&
+        m.status !== 'CANCELLED',
+    )
+    .map((m) => ({
+      id: m.id,
+      utcDate: m.utcDate,
+      status: m.status,
+      home: m.homeTeam.tla,
+      away: m.awayTeam.tla,
+      goals: (m as unknown as { goals?: { home: number | null; away: number | null } }).goals,
+      fullTime: m.score.fullTime,
+      extraTime: m.score.extraTime,
+      penalties: m.score.penalties,
+      winner: m.score.winner,
+      duration: m.score.duration,
+    }));
+
+  const compSummary =
+    competition && typeof competition === 'object'
+      ? {
+          id: (competition as { id?: number }).id,
+          name: (competition as { name?: string }).name,
+        }
+      : competition;
+
   return NextResponse.json({
     config: { competition: env.footballData.competition },
     competitionError,
-    competition,
+    competition: compSummary,
     matchesError,
     totalMatches: matches.length,
     byStage,
+    interestingMatches: interesting,
   });
 }
