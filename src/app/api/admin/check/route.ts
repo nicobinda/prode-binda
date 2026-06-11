@@ -5,14 +5,30 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/getCurrentUser';
 import {
   fetchCompetitionInfo,
+  fetchMatchById,
   fetchWorldCupMatches,
 } from '@/lib/football-data';
 import { env } from '@/lib/env';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const matchId = url.searchParams.get('matchId');
+
   const user = await getCurrentUser();
   if (!user || !user.is_admin) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+  }
+
+  if (matchId) {
+    try {
+      const single = await fetchMatchById(Number(matchId));
+      return NextResponse.json({ matchId, raw: single });
+    } catch (e) {
+      return NextResponse.json(
+        { error: e instanceof Error ? e.message : String(e) },
+        { status: 500 },
+      );
+    }
   }
 
   let competition: unknown = null;
