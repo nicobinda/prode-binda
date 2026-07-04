@@ -344,6 +344,7 @@ export async function overrideMatch(
     goals_b: input.goalsB,
     went_to_penalties: input.wentToPenalties,
     winner_team: input.winnerTeam,
+    overridden: true, // Marcamos como override manual — sync no lo va a pisar
   };
   if (input.markFinished) update.status = 'finished';
 
@@ -351,6 +352,21 @@ export async function overrideMatch(
   if (error) return { ok: false, error: error.message };
 
   await logAudit(admin.id, 'override_match', input.matchId, input as unknown as Record<string, unknown>);
+  revalidatePath('/admin');
+  revalidatePath('/');
+  return { ok: true };
+}
+
+// Limpia el flag de override para que el sync vuelva a manejar el partido.
+export async function clearOverride(matchId: string): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  const sb = supabaseAdmin();
+  const { error } = await sb
+    .from('matches')
+    .update({ overridden: false })
+    .eq('id', matchId);
+  if (error) return { ok: false, error: error.message };
+  await logAudit(admin.id, 'clear_override', matchId, null);
   revalidatePath('/admin');
   revalidatePath('/');
   return { ok: true };

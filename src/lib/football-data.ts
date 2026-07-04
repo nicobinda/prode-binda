@@ -120,28 +120,41 @@ export function goalsExcludingPenalties(m: FdMatch): {
     m.score.duration === 'PENALTY_SHOOTOUT' ||
     (m.score.penalties?.home !== null && m.score.penalties?.home !== undefined);
 
+  const reg = m.score.regularTime;
   const et = m.score.extraTime;
   const ft = m.score.fullTime;
   const pens = m.score.penalties;
 
-  // Caso 1 — Partido fue a penales: football-data a veces incluye los goles
-  // del shootout en fullTime (ej. 1-1 + penales 2-3 → fullTime = 3-4).
-  // Si tenemos ambos valores, restamos los penales del fullTime.
-  if (
-    wentToPenalties &&
-    ft?.home != null &&
-    ft?.away != null &&
-    pens?.home != null &&
-    pens?.away != null
-  ) {
-    const home = ft.home - pens.home;
-    const away = ft.away - pens.away;
-    if (home >= 0 && away >= 0) {
-      return { home, away, wentToPenalties };
+  // Caso 1 — Partido fue a penales.
+  // Preferimos regularTime + extraTime (semántica: extraTime = goles durante
+  // prórroga, aditivo). En football-data, fullTime a veces suma los penales.
+  if (wentToPenalties) {
+    if (reg?.home != null && reg?.away != null) {
+      return {
+        home: reg.home + (et?.home ?? 0),
+        away: reg.away + (et?.away ?? 0),
+        wentToPenalties: true,
+      };
     }
+    if (
+      ft?.home != null &&
+      ft?.away != null &&
+      pens?.home != null &&
+      pens?.away != null
+    ) {
+      const home = ft.home - pens.home;
+      const away = ft.away - pens.away;
+      if (home >= 0 && away >= 0) {
+        return { home, away, wentToPenalties: true };
+      }
+    }
+    if (ft?.home != null && ft?.away != null) {
+      return { home: ft.home, away: ft.away, wentToPenalties: true };
+    }
+    return { home: null, away: null, wentToPenalties: true };
   }
 
-  // Caso 2 — No fue a penales (o data incompleta): max(ET, FT).
+  // Caso 2 — No fue a penales: max(ET, FT).
   const pickMax = (
     a: number | null | undefined,
     b: number | null | undefined,
@@ -154,5 +167,5 @@ export function goalsExcludingPenalties(m: FdMatch): {
   const home = pickMax(et?.home, ft?.home);
   const away = pickMax(et?.away, ft?.away);
 
-  return { home, away, wentToPenalties };
+  return { home, away, wentToPenalties: false };
 }

@@ -106,7 +106,7 @@ export async function syncMatches(): Promise<SyncResult> {
   const externalIds = rows.map((r) => r.external_id);
   const { data: existing } = await supabaseAdmin()
     .from('matches')
-    .select('external_id, status, goals_a, goals_b, winner_team, went_to_penalties, team_a, team_b')
+    .select('external_id, status, goals_a, goals_b, winner_team, went_to_penalties, team_a, team_b, overridden')
     .in('external_id', externalIds);
 
   const existingByExt = new Map(
@@ -121,6 +121,8 @@ export async function syncMatches(): Promise<SyncResult> {
   const filteredRows = rows
     .filter((r) => {
       const ex = existingByExt.get(r.external_id);
+      // Nunca pisar overrides manuales del admin
+      if (ex?.overridden === true) return false;
       if (ex?.status === 'finished' && r.status === 'scheduled') return false;
       return true;
     })
