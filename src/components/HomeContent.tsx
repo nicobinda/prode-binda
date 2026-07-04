@@ -130,10 +130,19 @@ export function HomeContent({
     () => matches.find((m) => m.id === popupMatchId) ?? null,
     [matches, popupMatchId],
   );
-  const popupPreds = useMemo(
-    () => lockedPreds.filter((p) => p.match_id === popupMatchId),
-    [lockedPreds, popupMatchId],
-  );
+  const popupPreds = useMemo(() => {
+    // Dedupe defensivo por user_id — si por algún race de paginación
+    // vienen filas repetidas, nos quedamos con la primera de cada usuario.
+    const seen = new Set<string>();
+    const out: typeof lockedPreds = [];
+    for (const p of lockedPreds) {
+      if (p.match_id !== popupMatchId) continue;
+      if (seen.has(p.user.id)) continue;
+      seen.add(p.user.id);
+      out.push(p);
+    }
+    return out;
+  }, [lockedPreds, popupMatchId]);
 
   function handleSaved(p: Prediction) {
     setMyPreds((prev) => {
