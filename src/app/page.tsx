@@ -55,6 +55,7 @@ export default async function Home() {
         .from('predictions')
         .select('*, user:users(id, nickname, avatar_url)')
         .in('match_id', lockedMatchIds)
+        .order('id', { ascending: true })
         .range(from, from + PAGE - 1);
       if (error) break;
       if (!data || data.length === 0) break;

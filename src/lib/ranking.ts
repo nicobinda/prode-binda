@@ -22,9 +22,21 @@ export function computeRanking({
   // Index matches by id
   const matchById = new Map(matches.map((m) => [m.id, m]));
 
+  // Deduplicamos predicciones por (user_id, match_id) para blindar contra
+  // duplicados que pudieran venir de paginación mal ordenada.
+  const dedupKey = (p: Prediction) => `${p.user_id}::${p.match_id}`;
+  const seen = new Set<string>();
+  const uniquePredictions: Prediction[] = [];
+  for (const p of predictions) {
+    const k = dedupKey(p);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    uniquePredictions.push(p);
+  }
+
   // Index predictions by user
   const predsByUser = new Map<string, Prediction[]>();
-  for (const p of predictions) {
+  for (const p of uniquePredictions) {
     const arr = predsByUser.get(p.user_id) ?? [];
     arr.push(p);
     predsByUser.set(p.user_id, arr);

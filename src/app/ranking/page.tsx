@@ -38,6 +38,7 @@ export default async function RankingPage() {
         .from('predictions')
         .select('*')
         .in('match_id', finishedMatchIds)
+        .order('id', { ascending: true }) // orden estable — sin esto la paginación duplica/pierde filas
         .range(from, from + PAGE - 1);
       if (error) break;
       if (!data || data.length === 0) break;
